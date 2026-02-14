@@ -1,17 +1,13 @@
-class FeedForwardNetwork:
-    def __init__(self, layers):
-        """Initialize the feedforward network with a list of layers."""
-        self.layers = layers
+import torch
+import torch.nn as nn
 
-    def forward(self, inputs):
-        """Perform a forward pass through the network."""
-        for layer in self.layers:
-            inputs = layer.forward(inputs)
-        return inputs
+class FeedForwardNetwork(nn.Module):
+    def __init__(self, d_model, d_ff, dropout):
+        super(FeedForwardNetwork, self).__init__()
+        self.linear1 = nn.Linear(d_model, d_ff)
+        self.activation = nn.GELU()
+        self.dropout = nn.Dropout(dropout)
+        self.linear2 = nn.Linear(d_ff, d_model)
 
-    def train(self, training_data, epochs, learning_rate):
-        """Train the network using the provided training data."""
-        for epoch in range(epochs):
-            for inputs, target in training_data:
-                # Forward pass and backward pass would go here
-                pass
+    def forward(self, x):
+        return self.linear2(self.dropout(self.activation(self.linear1(x))))
